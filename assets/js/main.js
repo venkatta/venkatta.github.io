@@ -1,9 +1,6 @@
 /**
-* Template Name: iPortfolio
-* Updated: Jul 27 2023 with Bootstrap v5.3.1
-* Template URL: https://bootstrapmade.com/iportfolio-bootstrap-portfolio-websites-template/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
+* Main JS for Venkatesan's profile page
+* Base template: iPortfolio by BootstrapMade (https://bootstrapmade.com/)
 */
 (function() {
   "use strict";
@@ -35,7 +32,7 @@
   }
 
   /**
-   * Easy on scroll event listener 
+   * Easy on scroll event listener
    */
   const onscroll = (el, listener) => {
     el.addEventListener('scroll', listener)
@@ -67,7 +64,7 @@
   const scrollto = (el) => {
     let elementPos = select(el).offsetTop
     window.scrollTo({
-      top: elementPos,
+      top: elementPos - 70,
       behavior: 'smooth'
     })
   }
@@ -98,7 +95,7 @@
   })
 
   /**
-   * Scrool with ofset on links with a class name .scrollto
+   * Scroll with offset on links with a class name .scrollto
    */
   on('click', '.scrollto', function(e) {
     if (select(this.hash)) {
@@ -116,7 +113,7 @@
   }, true)
 
   /**
-   * Scroll with ofset on page load with hash links in the url
+   * Scroll with offset on page load with hash links in the url
    */
   window.addEventListener('load', () => {
     if (window.location.hash) {
@@ -143,104 +140,28 @@
   }
 
   /**
-   * Skills animation
+   * Skill bar fill animation when scrolled into view
    */
-  let skilsContent = select('.skills-content');
-  if (skilsContent) {
-    new Waypoint({
-      element: skilsContent,
-      offset: '80%',
-      handler: function(direction) {
-        let progress = select('.progress .progress-bar', true);
-        progress.forEach((el) => {
-          el.style.width = el.getAttribute('aria-valuenow') + '%'
-        });
-      }
-    })
+  let skillFills = select('.skill-fill', true)
+  if (skillFills.length) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.width = entry.target.getAttribute('data-level') + '%'
+          io.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.3 })
+    skillFills.forEach(el => io.observe(el))
   }
 
   /**
-   * Porfolio isotope and filter
+   * Footer year
    */
-  window.addEventListener('load', () => {
-    let portfolioContainer = select('.portfolio-container');
-    if (portfolioContainer) {
-      let portfolioIsotope = new Isotope(portfolioContainer, {
-        itemSelector: '.portfolio-item'
-      });
-
-      let portfolioFilters = select('#portfolio-flters li', true);
-
-      on('click', '#portfolio-flters li', function(e) {
-        e.preventDefault();
-        portfolioFilters.forEach(function(el) {
-          el.classList.remove('filter-active');
-        });
-        this.classList.add('filter-active');
-
-        portfolioIsotope.arrange({
-          filter: this.getAttribute('data-filter')
-        });
-        portfolioIsotope.on('arrangeComplete', function() {
-          AOS.refresh()
-        });
-      }, true);
-    }
-
-  });
-
-  /**
-   * Initiate portfolio lightbox 
-   */
-  const portfolioLightbox = GLightbox({
-    selector: '.portfolio-lightbox'
-  });
-
-  /**
-   * Portfolio details slider
-   */
-  new Swiper('.portfolio-details-slider', {
-    speed: 400,
-    loop: true,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'bullets',
-      clickable: true
-    }
-  });
-
-  /**
-   * Testimonials slider
-   */
-  new Swiper('.testimonials-slider', {
-    speed: 600,
-    loop: true,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false
-    },
-    slidesPerView: 'auto',
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'bullets',
-      clickable: true
-    },
-    breakpoints: {
-      320: {
-        slidesPerView: 1,
-        spaceBetween: 20
-      },
-
-      1200: {
-        slidesPerView: 3,
-        spaceBetween: 20
-      }
-    }
-  });
+  let yearEl = select('#year')
+  if (yearEl) {
+    yearEl.textContent = new Date().getFullYear()
+  }
 
   /**
    * Animation on scroll
@@ -253,10 +174,5 @@
       mirror: false
     })
   });
-
-  /**
-   * Initiate Pure Counter 
-   */
-  new PureCounter();
 
 })()
